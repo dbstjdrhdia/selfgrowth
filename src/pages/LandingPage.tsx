@@ -26,11 +26,19 @@ export default function LandingPage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", mbti: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/data")
-      .then(res => res.json())
-      .then(setData);
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch data");
+        return res.json();
+      })
+      .then(setData)
+      .catch(err => {
+        console.error(err);
+        setError("데이터를 불러오는 데 실패했습니다.");
+      });
 
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -56,6 +64,7 @@ export default function LandingPage() {
     }
   };
 
+  if (error) return <div className="h-screen flex items-center justify-center text-red-500 font-bold">{error}</div>;
   if (!data) return <div className="h-screen flex items-center justify-center">Loading...</div>;
 
   const { settings, posts } = data;

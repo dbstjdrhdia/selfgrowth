@@ -24,10 +24,19 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetch("/api/data")
-      .then(res => res.json())
-      .then(setData);
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch data");
+        return res.json();
+      })
+      .then(setData)
+      .catch(err => {
+        console.error(err);
+        setError("데이터를 불러오는 데 실패했습니다.");
+      });
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {

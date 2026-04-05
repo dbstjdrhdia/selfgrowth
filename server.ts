@@ -7,7 +7,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATA_FILE = path.join(__dirname, "data.json");
+// Use /tmp for serverless/read-only filesystem compatibility
+const DATA_FILE = process.env.NODE_ENV === "production" 
+  ? "/tmp/data.json" 
+  : path.join(__dirname, "data.json");
 
 // Initial data structure
 const initialData = {
