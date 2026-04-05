@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Post",
+      "description": "A blog post or announcement",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string", "enum": ["칼럼", "공지사항"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "category", "createdAt"]
+    },
+    "Application": {
+      "title": "Application",
+      "description": "A user application for the program",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "mbti": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["대기", "완료"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "status", "createdAt"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global site settings",
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string" },
+        "primaryColor": { "type": "string" },
+        "heroTitle": { "type": "string" },
+        "heroSubtitle": { "type": "string" }
+      },
+      "required": ["siteName", "primaryColor", "heroTitle", "heroSubtitle"]
+    }
+  },
+  "firestore": {
+    "posts/{postId}": {
+      "schema": "Post",
+      "description": "Collection of posts"
+    },
+    "applications/{applicationId}": {
+      "schema": "Application",
+      "description": "Collection of user applications"
+    },
+    "settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Singleton collection for site settings (e.g., settings/general)"
+    }
+  }
+}

@@ -17,10 +17,12 @@ import {
   Phone
 } from "lucide-react";
 import { cn } from "../lib/utils";
-import { AppData, Post } from "../types";
+import { AppData, Post, SiteSettings } from "../types";
+import { db } from "../firebase";
+import { collection, onSnapshot, query, orderBy, addDoc, doc } from "firebase/firestore";
 
 export default function LandingPage() {
-  const [data, setData] = useState<AppData | null>(null);
+  const [data, setData] = useState<{ posts: Post[], settings: SiteSettings } | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -29,38 +31,72 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/data?t=${Date.now()}`)
-      .then(async res => {
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
+    // Listen to settings
+    const unsubscribeSettings = onSnapshot(doc(db, "settings", "general"), (docSnap) => {
+      if (docSnap.exists()) {
+        setData(prev => ({
+          posts: prev?.posts || [],
+          settings: docSnap.data() as SiteSettings
+        }));
+      } else {
+        // Fallback default settings if not exists
+        setData(prev => ({
+          posts: prev?.posts || [],
+          settings: {
+            siteName: "자아성장연구소",
+            primaryColor: "#B5B2D2",
+            heroTitle: "나를 찾는 여정, 자아성장연구소",
+            heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
+          }
+        }));
+      }
+    }, (err) => {
+      console.error("Settings fetch error:", err);
+      setError(`설정 로드 실패: ${err.message}`);
+    });
+
+    // Listen to posts
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    const unsubscribePosts = onSnapshot(q, (snapshot) => {
+      const postsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+      setData(prev => ({
+        posts: postsData,
+        settings: prev?.settings || {
+          siteName: "자아성장연구소",
+          primaryColor: "#B5B2D2",
+          heroTitle: "나를 찾는 여정, 자아성장연구소",
+          heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
         }
-        return res.json();
-      })
-      .then(setData)
-      .catch(err => {
-        console.error(err);
-        setError(`데이터 로드 실패: ${err.message}`);
-      });
+      }));
+    }, (err) => {
+      console.error("Posts fetch error:", err);
+      setError(`게시글 로드 실패: ${err.message}`);
+    });
 
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      unsubscribeSettings();
+      unsubscribePosts();
+    };
   }, []);
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await fetch("/api/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await addDoc(collection(db, "applications"), {
+        ...formData,
+        status: "대기",
+        createdAt: new Date().toISOString()
       });
       alert("신청이 완료되었습니다. 곧 연락드리겠습니다.");
       setShowApplyModal(false);
       setFormData({ name: "", phone: "", mbti: "", message: "" });
     } catch (err) {
+      console.error("Application error:", err);
       alert("신청 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);

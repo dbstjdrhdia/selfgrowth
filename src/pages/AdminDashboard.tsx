@@ -16,70 +16,79 @@ import {
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { AppData, Post, Application, SiteSettings } from "../types";
+import { db, auth, loginWithGoogle, logout } from "../firebase";
+import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function AdminDashboard() {
-  const [data, setData] = useState<AppData | null>(null);
+  const [data, setData] = useState<AppData>({ posts: [], applications: [], settings: { siteName: "", primaryColor: "", heroTitle: "", heroSubtitle: "" } });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [password, setPassword] = useState("");
+  const [isAuthReady, setIsAuthReady] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/data?t=${Date.now()}`)
-      .then(async res => {
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
-        }
-        return res.json();
-      })
-      .then(setData)
-      .catch(err => {
-        console.error(err);
-        setError(`데이터 로드 실패: ${err.message}`);
-      });
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+      setIsAuthReady(true);
+    });
+    return () => unsubscribeAuth();
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !isAuthReady) return;
+
+    const unsubSettings = onSnapshot(doc(db, "settings", "general"), (docSnap) => {
+      if (docSnap.exists()) {
+        setData(prev => ({ ...prev, settings: docSnap.data() as SiteSettings }));
+      }
+    }, err => setError(err.message));
+
+    const unsubPosts = onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), (snapshot) => {
+      setData(prev => ({ ...prev, posts: snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Post)) }));
+    }, err => setError(err.message));
+
+    const unsubApps = onSnapshot(query(collection(db, "applications"), orderBy("createdAt", "desc")), (snapshot) => {
+      setData(prev => ({ ...prev, applications: snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Application)) }));
+    }, err => setError(err.message));
+
+    return () => {
+      unsubSettings();
+      unsubPosts();
+      unsubApps();
+    };
+  }, [isLoggedIn, isAuthReady]);
 
   if (error) {
     return <div className="min-h-screen flex items-center justify-center text-red-500 font-bold p-6 text-center">{error}</div>;
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin1234") { // Simple demo password
-      setIsLoggedIn(true);
-    } else {
-      alert("비밀번호가 틀렸습니다.");
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      console.error(err);
+      alert("로그인 실패");
     }
   };
+
+  if (!isAuthReady) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
         <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md">
           <h1 className="text-3xl font-serif font-bold mb-8 text-center">관리자 로그인</h1>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-sm font-bold mb-2">비밀번호</label>
-              <input 
-                type="password" 
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-lavender"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
-            <button className="w-full bg-lavender text-white py-4 rounded-xl font-bold hover:bg-lavender-dark transition-all">
-              로그인
-            </button>
-          </form>
+          <button onClick={handleLogin} className="w-full bg-lavender text-white py-4 rounded-xl font-bold hover:bg-lavender-dark transition-all">
+            Google 계정으로 로그인
+          </button>
         </div>
       </div>
     );
   }
-
-  if (!data) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -94,7 +103,7 @@ export default function AdminDashboard() {
         </nav>
         <div className="p-4 border-t border-white/10">
           <button 
-            onClick={() => setIsLoggedIn(false)}
+            onClick={logout}
             className="w-full flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
           >
             <LogOut className="w-5 h-5 mr-3" /> 로그아웃
@@ -109,9 +118,9 @@ export default function AdminDashboard() {
       <main className="flex-1 overflow-y-auto p-10">
         <Routes>
           <Route index element={<DashboardHome data={data} />} />
-          <Route path="posts" element={<PostManagement posts={data.posts} onUpdate={() => fetch("/api/data").then(res => res.json()).then(setData)} />} />
-          <Route path="applications" element={<ApplicationManagement applications={data.applications} onUpdate={() => fetch("/api/data").then(res => res.json()).then(setData)} />} />
-          <Route path="settings" element={<SettingsManagement settings={data.settings} onUpdate={() => fetch("/api/data").then(res => res.json()).then(setData)} />} />
+          <Route path="posts" element={<PostManagement posts={data.posts} />} />
+          <Route path="applications" element={<ApplicationManagement applications={data.applications} />} />
+          <Route path="settings" element={<SettingsManagement settings={data.settings} />} />
         </Routes>
       </main>
     </div>
@@ -182,29 +191,42 @@ function StatCard({ label, value, sub, highlight }: { label: string, value: numb
   );
 }
 
-function PostManagement({ posts, onUpdate }: { posts: Post[], onUpdate: () => void }) {
+function PostManagement({ posts }: { posts: Post[] }) {
   const [isEditing, setIsEditing] = useState(false);
   const [currentPost, setCurrentPost] = useState<Partial<Post>>({ title: "", content: "", category: "칼럼" });
 
   const handleSave = async () => {
-    const method = currentPost.id ? "PUT" : "POST";
-    const url = currentPost.id ? `/api/posts/${currentPost.id}` : "/api/posts";
-    
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentPost),
-    });
-    
-    setIsEditing(false);
-    setCurrentPost({ title: "", content: "", category: "칼럼" });
-    onUpdate();
+    try {
+      if (currentPost.id) {
+        await updateDoc(doc(db, "posts", currentPost.id), {
+          title: currentPost.title,
+          content: currentPost.content,
+          category: currentPost.category
+        });
+      } else {
+        await addDoc(collection(db, "posts"), {
+          title: currentPost.title,
+          content: currentPost.content,
+          category: currentPost.category,
+          createdAt: new Date().toISOString()
+        });
+      }
+      setIsEditing(false);
+      setCurrentPost({ title: "", content: "", category: "칼럼" });
+    } catch (err) {
+      console.error(err);
+      alert("저장 실패");
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
-    await fetch(`/api/posts/${id}`, { method: "DELETE" });
-    onUpdate();
+    try {
+      await deleteDoc(doc(db, "posts", id));
+    } catch (err) {
+      console.error(err);
+      alert("삭제 실패");
+    }
   };
 
   return (
@@ -289,14 +311,14 @@ function PostManagement({ posts, onUpdate }: { posts: Post[], onUpdate: () => vo
   );
 }
 
-function ApplicationManagement({ applications, onUpdate }: { applications: Application[], onUpdate: () => void }) {
+function ApplicationManagement({ applications }: { applications: Application[] }) {
   const handleStatusChange = async (id: string, status: string) => {
-    await fetch(`/api/applications/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    onUpdate();
+    try {
+      await updateDoc(doc(db, "applications", id), { status });
+    } catch (err) {
+      console.error(err);
+      alert("상태 변경 실패");
+    }
   };
 
   return (
@@ -356,17 +378,21 @@ function ApplicationManagement({ applications, onUpdate }: { applications: Appli
   );
 }
 
-function SettingsManagement({ settings, onUpdate }: { settings: SiteSettings, onUpdate: () => void }) {
+function SettingsManagement({ settings }: { settings: SiteSettings }) {
   const [localSettings, setLocalSettings] = useState(settings);
 
+  useEffect(() => {
+    setLocalSettings(settings);
+  }, [settings]);
+
   const handleSave = async () => {
-    await fetch("/api/settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(localSettings),
-    });
-    alert("설정이 저장되었습니다.");
-    onUpdate();
+    try {
+      await setDoc(doc(db, "settings", "general"), localSettings);
+      alert("설정이 저장되었습니다.");
+    } catch (err) {
+      console.error(err);
+      alert("설정 저장 실패");
+    }
   };
 
   return (

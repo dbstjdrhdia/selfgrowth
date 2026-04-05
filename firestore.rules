@@ -1,0 +1,125 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: posts
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required, max 100 chars)
+    //   - content: string (required, max 10000 chars)
+    //   - category: string (required, '칼럼' or '공지사항')
+    //   - createdAt: string (required, ISO 8601 date string)
+    //
+    // Collection: applications
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required, max 50 chars)
+    //   - phone: string (required, max 20 chars)
+    //   - mbti: string (optional, max 10 chars)
+    //   - message: string (optional, max 2000 chars)
+    //   - status: string (required, '대기' or '완료')
+    //   - createdAt: string (required, ISO 8601 date string)
+    //
+    // Collection: settings
+    // Document ID: 'general'
+    // Fields:
+    //   - siteName: string (required, max 50 chars)
+    //   - primaryColor: string (required, max 20 chars)
+    //   - heroTitle: string (required, max 100 chars)
+    //   - heroSubtitle: string (required, max 500 chars)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.email == "dbstjdrhdia@gmail.com" && request.auth.token.email_verified == true;
+    }
+
+    function hasOnlyAllowedFields(allowedFields) {
+      return request.resource.data.keys().hasOnly(allowedFields);
+    }
+
+    function isValidString(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+             request.resource.data[field].size() >= minLen &&
+             request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidOptionalString(field, maxLen) {
+      return !('field' in request.resource.data) || 
+             (request.resource.data[field] is string && request.resource.data[field].size() <= maxLen);
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidPost() {
+      return hasOnlyAllowedFields(['title', 'content', 'category', 'createdAt']) &&
+             isValidString('title', 1, 100) &&
+             isValidString('content', 1, 10000) &&
+             request.resource.data.category in ['칼럼', '공지사항'] &&
+             isValidDateString(request.resource.data.createdAt);
+    }
+
+    function isValidApplication() {
+      return hasOnlyAllowedFields(['name', 'phone', 'mbti', 'message', 'status', 'createdAt']) &&
+             isValidString('name', 1, 50) &&
+             isValidString('phone', 1, 20) &&
+             isValidOptionalString('mbti', 10) &&
+             isValidOptionalString('message', 2000) &&
+             request.resource.data.status in ['대기', '완료'] &&
+             isValidDateString(request.resource.data.createdAt);
+    }
+
+    function isValidSettings() {
+      return hasOnlyAllowedFields(['siteName', 'primaryColor', 'heroTitle', 'heroSubtitle']) &&
+             isValidString('siteName', 1, 50) &&
+             isValidString('primaryColor', 1, 20) &&
+             isValidString('heroTitle', 1, 100) &&
+             isValidString('heroSubtitle', 1, 500);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidPost();
+      allow update: if isAdmin() && isValidPost();
+      allow delete: if isAdmin();
+    }
+
+    match /applications/{applicationId} {
+      allow read: if isAdmin();
+      // Anyone can submit an application, but it must be valid and status must be '대기'
+      allow create: if isValidApplication() && request.resource.data.status == '대기';
+      allow update: if isAdmin() && isValidApplication();
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidSettings() && settingId == 'general';
+      allow update: if isAdmin() && isValidSettings() && settingId == 'general';
+      allow delete: if false; // Settings should not be deleted
+    }
+  }
+}
