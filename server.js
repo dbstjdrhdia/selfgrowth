@@ -59,7 +59,7 @@ function readData() {
   }
 }
 
-function writeData(data: any) {
+function writeData(data) {
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
   } catch (error) {
@@ -94,7 +94,7 @@ async function startServer() {
 
   app.put("/api/posts/:id", (req, res) => {
     const data = readData();
-    const index = data.posts.findIndex((p: any) => p.id === req.params.id);
+    const index = data.posts.findIndex((p) => p.id === req.params.id);
     if (index !== -1) {
       data.posts[index] = { ...data.posts[index], ...req.body };
       writeData(data);
@@ -106,7 +106,7 @@ async function startServer() {
 
   app.delete("/api/posts/:id", (req, res) => {
     const data = readData();
-    data.posts = data.posts.filter((p: any) => p.id !== req.params.id);
+    data.posts = data.posts.filter((p) => p.id !== req.params.id);
     writeData(data);
     res.json({ success: true });
   });
@@ -121,7 +121,7 @@ async function startServer() {
 
   app.patch("/api/applications/:id", (req, res) => {
     const data = readData();
-    const index = data.applications.findIndex((a: any) => a.id === req.params.id);
+    const index = data.applications.findIndex((a) => a.id === req.params.id);
     if (index !== -1) {
       data.applications[index].status = req.body.status;
       writeData(data);
