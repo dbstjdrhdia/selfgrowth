@@ -7,8 +7,9 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Use /tmp for serverless/read-only filesystem compatibility
-const DATA_FILE = process.env.NODE_ENV === "production" 
+// Use /tmp for serverless/read-only filesystem compatibility when deployed
+const isDeployed = fs.existsSync(path.join(process.cwd(), "dist"));
+const DATA_FILE = isDeployed 
   ? "/tmp/data.json" 
   : path.join(__dirname, "data.json");
 
@@ -45,11 +46,25 @@ if (!fs.existsSync(DATA_FILE)) {
 }
 
 function readData() {
-  return JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
+  try {
+    if (!fs.existsSync(DATA_FILE)) {
+      console.log(`Data file not found at ${DATA_FILE}, creating it...`);
+      fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2));
+    }
+    const rawData = fs.readFileSync(DATA_FILE, "utf-8");
+    return JSON.parse(rawData);
+  } catch (error) {
+    console.error("Error reading data:", error);
+    return initialData; // Fallback to initial data if reading fails
+  }
 }
 
 function writeData(data: any) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("Error writing data:", error);
+  }
 }
 
 async function startServer() {
@@ -60,7 +75,13 @@ async function startServer() {
 
   // API Routes
   app.get("/api/data", (req, res) => {
-    res.json(readData());
+    try {
+      const data = readData();
+      res.json(data);
+    } catch (error) {
+      console.error("API /api/data error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   app.post("/api/posts", (req, res) => {
@@ -117,19 +138,21 @@ async function startServer() {
     res.json(data.settings);
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  // Serve static files if 'dist' exists (production), otherwise use Vite middleware
+  const distPath = path.join(process.cwd(), "dist");
+  if (fs.existsSync(distPath)) {
+    console.log("Serving static files from dist...");
+    app.use(express.static(distPath));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  } else {
+    console.log("Starting Vite middleware for development...");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
   }
 
   app.listen(PORT, "0.0.0.0", () => {

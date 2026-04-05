@@ -27,17 +27,24 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/data")
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch data");
+    fetch(`/api/data?t=${Date.now()}`)
+      .then(async res => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
+        }
         return res.json();
       })
       .then(setData)
       .catch(err => {
         console.error(err);
-        setError("데이터를 불러오는 데 실패했습니다.");
+        setError(`데이터 로드 실패: ${err.message}`);
       });
   }, []);
+
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500 font-bold p-6 text-center">{error}</div>;
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
