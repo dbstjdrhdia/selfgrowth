@@ -435,9 +435,8 @@ function SettingsManagement({ settings }: { settings: SiteSettings }) {
             <h2 className="text-xl font-bold border-b pb-4">히어로 섹션 문구</h2>
             <div>
               <label className="block text-sm font-bold mb-2">메인 타이틀</label>
-              <input 
-                type="text" 
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none"
+              <textarea 
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none h-24 resize-none"
                 value={localSettings.heroTitle}
                 onChange={e => setLocalSettings({...localSettings, heroTitle: e.target.value})}
               />

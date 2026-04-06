@@ -45,7 +45,7 @@ export default function LandingPage() {
           settings: {
             siteName: "자아성장연구소",
             primaryColor: "#B5B2D2",
-            heroTitle: "나를 찾는 여정, 자아성장연구소",
+            heroTitle: "진짜 '나'를 만나는 시간,\nMBTI 자아성장 프로그램",
             heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
           }
         }));
@@ -64,7 +64,7 @@ export default function LandingPage() {
         settings: prev?.settings || {
           siteName: "자아성장연구소",
           primaryColor: "#B5B2D2",
-          heroTitle: "나를 찾는 여정, 자아성장연구소",
+          heroTitle: "진짜 '나'를 만나는 시간,\nMBTI 자아성장 프로그램",
           heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
         }
       }));
@@ -177,7 +177,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight"
+            className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight whitespace-pre-line"
           >
             {settings.heroTitle}
           </motion.h1>
@@ -216,17 +216,17 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { 
-                icon: <Brain className="w-10 h-10 text-lavender" />, 
+                icon: <Brain className="w-8 h-8 text-lavender" />, 
                 title: "MBTI 성격유형", 
                 desc: "단순한 검사를 넘어, 나의 인지 기능과 에너지 방향성을 심도 있게 분석합니다." 
               },
               { 
-                icon: <Heart className="w-10 h-10 text-lavender" />, 
+                icon: <Heart className="w-8 h-8 text-lavender" />, 
                 title: "Core Emotion", 
                 desc: "나의 행동을 지배하는 핵심 감정을 발견하고 건강하게 표현하는 법을 배웁니다." 
               },
               { 
-                icon: <Users className="w-10 h-10 text-lavender" />, 
+                icon: <Users className="w-8 h-8 text-lavender" />, 
                 title: "Attachment Style", 
                 desc: "대인관계의 뿌리가 되는 애착 유형을 파악하여 더 나은 관계를 설계합니다." 
               }
@@ -236,7 +236,9 @@ export default function LandingPage() {
                 whileHover={{ y: -10 }}
                 className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100"
               >
-                <div className="mb-6">{item.icon}</div>
+                <div className="w-16 h-16 bg-lavender/10 rounded-2xl flex items-center justify-center mb-6">
+                  {item.icon}
+                </div>
                 <h3 className="text-2xl font-serif font-bold mb-4">{item.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{item.desc}</p>
               </motion.div>
@@ -310,6 +312,10 @@ export default function LandingPage() {
                   <div>
                     <p className="text-sm text-gray-400 mb-1">대상</p>
                     <p className="text-lg font-medium">자신을 더 깊이 알고 싶은 20대 청년</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400 mb-1">인원</p>
+                    <p className="text-lg font-medium">최소 6명 이상 (소규모 집중 진행)</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">참가비</p>
