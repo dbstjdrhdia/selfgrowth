@@ -284,9 +284,8 @@ export default function LandingPage() {
           <div className="flex-1">
             <div className="relative">
               <div className="absolute -inset-4 bg-lavender/20 rounded-full blur-3xl" />
-              {/* TODO: 첨부해주신 실제 김푸름 전문가의 사진 URL이나 파일 경로로 src를 변경해주세요 */}
               <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+                src="https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true" 
                 alt="김푸름 전문가"
                 className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto"
                 referrerPolicy="no-referrer"
