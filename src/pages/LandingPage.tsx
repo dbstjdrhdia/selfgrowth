@@ -45,8 +45,8 @@ export default function LandingPage() {
           settings: {
             siteName: "자아성장연구소",
             primaryColor: "#B5B2D2",
-            heroTitle: "진짜 '나'를 만나는 시간,\nMBTI 자아성장 프로그램",
-            heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
+            heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+            heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
           }
         }));
       }
@@ -64,8 +64,8 @@ export default function LandingPage() {
         settings: prev?.settings || {
           siteName: "자아성장연구소",
           primaryColor: "#B5B2D2",
-          heroTitle: "진짜 '나'를 만나는 시간,\nMBTI 자아성장 프로그램",
-          heroSubtitle: "20대 청년들을 위한 MBTI 기반 심리 성장 프로그램"
+          heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+          heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
         }
       }));
     }, (err) => {
@@ -202,6 +202,37 @@ export default function LandingPage() {
               <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Target Audience Section */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">이런 분들께 꼭 필요합니다</h2>
+            <p className="text-gray-500">지금 당신의 고민, 혼자만의 것이 아닙니다</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              "내가 진짜 원하는 것이 무엇인지 진로와 방향성이 막막한 분",
+              "새로운 사람들을 만나고 관계를 맺는 것에 막연한 두려움이 있는 분",
+              "나의 감정을 건강하게 다루고 표현하는 방법을 배우고 싶은 분"
+            ].map((text, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center p-6 bg-slate-50 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <div className="w-12 h-12 bg-lavender/20 rounded-full flex items-center justify-center mr-6 shrink-0">
+                  <CheckCircle2 className="w-6 h-6 text-lavender" />
+                </div>
+                <p className="text-lg text-gray-700 font-medium">{text}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
