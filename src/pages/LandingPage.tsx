@@ -251,9 +251,10 @@ export default function LandingPage() {
           <div className="flex-1">
             <div className="relative">
               <div className="absolute -inset-4 bg-lavender/20 rounded-full blur-3xl" />
+              {/* TODO: 첨부해주신 실제 김푸름 전문가의 사진 URL이나 파일 경로로 src를 변경해주세요 */}
               <img 
                 src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
-                alt="Expert"
+                alt="김푸름 전문가"
                 className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto"
                 referrerPolicy="no-referrer"
               />
@@ -261,17 +262,21 @@ export default function LandingPage() {
           </div>
           <div className="flex-1">
             <span className="text-lavender font-bold tracking-widest uppercase text-sm mb-4 block">Professional Counselor</span>
-            <h2 className="text-4xl font-serif font-bold mb-6">당신의 성장을 돕는 전문가</h2>
+            <h2 className="text-4xl font-serif font-bold mb-2 flex items-end gap-3">
+              김푸름 <span className="text-2xl text-gray-400 font-light tracking-widest">KIM PU REUM</span>
+            </h2>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              자아성장연구소의 상담사들은 공인된 자격을 갖춘 전문가들로 구성되어 있습니다. 
-              수천 건의 상담 사례를 바탕으로 20대 청년들이 겪는 정체성 혼란과 관계의 어려움을 함께 해결합니다.
+              당신의 성장을 돕는 전문가
             </p>
             <ul className="space-y-4">
               {[
-                "한국상담심리학회 상담심리사 1급",
-                "MBTI 일반강사 자격 보유",
-                "누적 상담 시간 3,000시간 이상",
-                "심리학 석사/박사 학위 소지"
+                "케임브리지대학교 사회심리학 전공",
+                "서울대학교 정서심리학 전공",
+                "미네소타대 심리학 전공",
+                "前 서대전여자고등학교 인턴상담교사",
+                "前 세브란스 재활병원 인턴임상심리사",
+                "現 한국국방연구원",
+                "現 감정서재 대표"
               ].map((text, i) => (
                 <li key={i} className="flex items-center text-gray-700">
                   <CheckCircle2 className="text-lavender mr-3 w-5 h-5" />
@@ -308,7 +313,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">참가비</p>
-                    <p className="text-lg font-medium">350,000원 (교재 및 검사비 포함)</p>
+                    <p className="text-lg font-medium">300,000원 (교재 및 검사비 포함)</p>
                   </div>
                 </div>
               </div>
@@ -316,10 +321,9 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-serif font-bold mb-8">커리큘럼</h3>
                 <ul className="space-y-4">
                   {[
-                    "1-2주: MBTI 정밀 분석 및 인지 기능 이해",
-                    "3-4주: 핵심 감정 탐색 및 정서 조절 훈련",
-                    "5주: 애착 유형 분석 및 관계 패턴 파악",
-                    "6주: 통합 자아 설계 및 미래 비전 수립"
+                    "1-2주: MBTI 핵심감정 애착유형 등 인지 기능 검사",
+                    "3주: 자아 수립 및 자존감 형성",
+                    "4-6주: 통합 자아 설계 및 가치관 비전 수립"
                   ].map((text, i) => (
                     <li key={i} className="flex items-start">
                       <span className="bg-lavender text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mt-1 mr-3 shrink-0">{i+1}</span>
@@ -333,23 +337,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Posts/FAQ Section */}
+      {/* FAQ Section */}
       <section id="faq" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+        <div className="max-w-3xl mx-auto">
           <div>
-            <h2 className="text-3xl font-serif font-bold mb-10">최신 칼럼 & 소식</h2>
-            <div className="space-y-6">
-              {posts.slice(0, 3).map((post) => (
-                <div key={post.id} className="group cursor-pointer border-b border-gray-100 pb-6">
-                  <span className="text-xs font-bold text-lavender uppercase tracking-widest mb-2 block">{post.category}</span>
-                  <h3 className="text-xl font-bold group-hover:text-lavender transition-colors mb-2">{post.title}</h3>
-                  <p className="text-gray-500 line-clamp-2 text-sm">{post.content}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h2 className="text-3xl font-serif font-bold mb-10">자주 묻는 질문</h2>
+            <h2 className="text-3xl font-serif font-bold mb-10 text-center">자주 묻는 질문</h2>
             <div className="space-y-4">
               {[
                 { q: "심리학 전공자가 아니어도 참여 가능한가요?", a: "네, 당연합니다. 누구나 이해하기 쉬운 언어로 진행됩니다." },
@@ -370,33 +362,12 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-20 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
-          <div className="col-span-2">
-            <div className="text-3xl font-serif font-bold text-lavender mb-6">{settings.siteName}</div>
-            <p className="text-gray-400 max-w-md leading-relaxed">
-              우리는 모든 청년이 자신만의 고유한 빛을 발견하고, 
-              더 건강한 내면을 가꾸어 나갈 수 있도록 돕습니다.
-            </p>
+      <footer className="bg-slate-900 text-white py-12 px-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="text-3xl font-serif font-bold text-lavender mb-6">{settings.siteName}</div>
+          <div className="text-gray-500 text-sm">
+            © 2026 {settings.siteName}. All rights reserved.
           </div>
-          <div>
-            <h4 className="font-bold mb-6">Contact</h4>
-            <ul className="space-y-4 text-gray-400">
-              <li className="flex items-center"><Mail className="w-4 h-4 mr-2" /> info@selfgrowth.lab</li>
-              <li className="flex items-center"><Phone className="w-4 h-4 mr-2" /> 02-1234-5678</li>
-              <li className="flex items-center">서울시 강남구 테헤란로 123</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6">Follow Us</h4>
-            <div className="flex space-x-4">
-              <a href="#" className="bg-white/10 p-3 rounded-full hover:bg-lavender transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="bg-white/10 p-3 rounded-full hover:bg-lavender transition-colors"><Facebook className="w-5 h-5" /></a>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/10 text-center text-gray-500 text-sm">
-          © 2026 {settings.siteName}. All rights reserved.
         </div>
       </footer>
 
