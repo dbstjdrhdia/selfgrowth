@@ -45,7 +45,7 @@ export default function LandingPage() {
           settings: {
             siteName: "자아성장연구소",
             primaryColor: "#B5B2D2",
-            heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+            heroTitle: "흔들리지 않는 나를 만드는\n자아성장 프로젝트",
             heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
           }
         }));
@@ -64,7 +64,7 @@ export default function LandingPage() {
         settings: prev?.settings || {
           siteName: "자아성장연구소",
           primaryColor: "#B5B2D2",
-          heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+          heroTitle: "흔들리지 않는 나를 만드는\n자아성장 프로젝트",
           heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
         }
       }));
@@ -177,7 +177,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight whitespace-pre-line"
+            className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight whitespace-pre-line break-keep"
           >
             {settings.heroTitle}
           </motion.h1>
@@ -281,18 +281,18 @@ export default function LandingPage() {
       {/* Expert Section */}
       <section id="expert" className="py-24 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <div className="relative">
               <div className="absolute -inset-4 bg-lavender/20 rounded-full blur-3xl" />
               <img 
-                src="https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true" 
+                src="https://raw.githubusercontent.com/dbstjdrhdia/selfgrowth/main/profile.jpg" 
                 alt="김푸름 전문가"
                 className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto"
                 referrerPolicy="no-referrer"
               />
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <span className="text-lavender font-bold tracking-widest uppercase text-sm mb-4 block">Professional Counselor</span>
             <h2 className="text-4xl font-serif font-bold mb-2 flex items-end gap-3">
               김푸름 <span className="text-2xl text-gray-400 font-light tracking-widest">KIM PU REUM</span>
