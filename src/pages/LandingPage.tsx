@@ -45,8 +45,8 @@ export default function LandingPage() {
           settings: {
             siteName: "자아성장연구소",
             primaryColor: "#B5B2D2",
-            heroTitle: "흔들리지 않는 나를 만드는\n자아성장 프로젝트",
-            heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
+            heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+            heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음.\n성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
           }
         }));
       }
@@ -64,8 +64,8 @@ export default function LandingPage() {
         settings: prev?.settings || {
           siteName: "자아성장연구소",
           primaryColor: "#B5B2D2",
-          heroTitle: "흔들리지 않는 나를 만드는\n자아성장 프로젝트",
-          heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음. 성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
+          heroTitle: "흔들리지 않는 '나'를 만드는\n자아성장 프로젝트",
+          heroSubtitle: "취업 전, 그리고 사회생활의 첫걸음.\n성격, 감정, 애착 패턴 분석을 통해 가장 건강한 대인관계를 설계합니다."
         }
       }));
     }, (err) => {
@@ -185,7 +185,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-600 mb-10 font-light"
+            className="text-xl md:text-2xl text-gray-600 mb-10 font-light whitespace-pre-line break-keep"
           >
             {settings.heroSubtitle}
           </motion.p>
