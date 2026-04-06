@@ -285,7 +285,7 @@ export default function LandingPage() {
             <div className="relative">
               <div className="absolute -inset-4 bg-lavender/20 rounded-full blur-3xl" />
               <img 
-                src="https://raw.githubusercontent.com/dbstjdrhdia/selfgrowth/main/profile.jpg" 
+                src="https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true" 
                 alt="김푸름 전문가"
                 className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto"
                 referrerPolicy="no-referrer"
