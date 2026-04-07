@@ -345,7 +345,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">인원</p>
-                    <p className="text-lg font-medium">최소 6명 이상 (소규모 집중 진행)</p>
+                    <p className="text-lg font-medium">4~8인 (소규모 집중 진행)</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">참가비</p>
