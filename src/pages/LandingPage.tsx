@@ -325,7 +325,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-serif font-bold mb-4">프로그램 일정</h2>
-            <p className="text-gray-500">6주간의 체계적인 변화</p>
+            <p className="text-gray-500">3주간의 체계적인 변화</p>
           </div>
 
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -337,7 +337,7 @@ export default function LandingPage() {
                 <div className="space-y-6">
                   <div>
                     <p className="text-sm text-gray-400 mb-1">기간</p>
-                    <p className="text-lg font-medium">총 6주 (주 2회, 총 12회차)</p>
+                    <p className="text-lg font-medium">총 3주 (주 2회, 총 6회차)</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">대상</p>
@@ -357,9 +357,9 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-serif font-bold mb-8">커리큘럼</h3>
                 <ul className="space-y-4">
                   {[
-                    "1-2주: MBTI 핵심감정 애착유형 등 인지 기능 검사",
-                    "3주: 자아 수립 및 자존감 형성",
-                    "4-6주: 통합 자아 설계 및 가치관 비전 수립"
+                    "1주: MBTI 핵심감정 애착유형 등 인지 기능 검사",
+                    "2주: 자아 수립 및 자존감 형성",
+                    "3주: 통합 자아 설계 및 가치관 비전 수립"
                   ].map((text, i) => (
                     <li key={i} className="flex items-start">
                       <span className="bg-lavender text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mt-1 mr-3 shrink-0">{i+1}</span>
@@ -381,7 +381,6 @@ export default function LandingPage() {
             <div className="space-y-4">
               {[
                 { q: "심리학 전공자가 아니어도 참여 가능한가요?", a: "네, 당연합니다. 누구나 이해하기 쉬운 언어로 진행됩니다." },
-                { q: "온라인으로도 진행되나요?", a: "현재는 오프라인 대면 상담을 원칙으로 하지만, 상황에 따라 줌(Zoom) 상담도 병행합니다." },
                 { q: "환불 규정은 어떻게 되나요?", a: "프로그램 시작 3일 전까지는 100% 환불이 가능합니다." }
               ].map((item, i) => (
                 <details key={i} className="group bg-slate-50 rounded-2xl p-6 cursor-pointer">
