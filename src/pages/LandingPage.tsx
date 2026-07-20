@@ -29,6 +29,7 @@ export default function LandingPage() {
   const [formData, setFormData] = useState({ name: "", phone: "", mbti: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [profileImg, setProfileImg] = useState<string>("/profile.jpg");
 
   useEffect(() => {
     // Listen to settings
@@ -285,10 +286,17 @@ export default function LandingPage() {
             <div className="relative">
               <div className="absolute -inset-4 bg-lavender/20 rounded-full blur-3xl" />
               <img 
-                src="https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true" 
+                src={profileImg} 
                 alt="김푸름 전문가"
                 className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto"
                 referrerPolicy="no-referrer"
+                onError={() => {
+                  if (profileImg === "/profile.jpg") {
+                    setProfileImg("https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true");
+                  } else if (profileImg === "https://github.com/dbstjdrhdia/selfgrowth/blob/main/profile.jpg?raw=true") {
+                    setProfileImg("https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800");
+                  }
+                }}
               />
             </div>
           </div>
